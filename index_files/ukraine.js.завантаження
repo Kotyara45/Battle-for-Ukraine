@@ -1,0 +1,495 @@
+var date = new Date();
+var start_date = new Date();
+var hard = 0;
+
+var army = {
+    UKR283: {
+        name: "Крим",
+        troops: 10000,
+        rus: true
+    },
+    UKR284: {
+        name: "Миколаїв",
+        troops: 10000
+    },
+    UKR285: {
+        name: "Чернігів",
+        troops: 1000
+    },
+    UKR286: {
+        name: "Рівне",
+        troops: 1000
+    },
+    UKR288: {
+        name: "Чернівці",
+        troops: 3000
+    },
+    UKR289: {
+        name: "Івано-Франківськ",
+        troops: 3000
+    },
+    UKR290: {
+        name: "Хмельницький",
+        troops: 3000
+    },
+    UKR291: {
+        name: "Львів",
+        troops: 40000
+    },
+    UKR292: {
+        name: "Тернопіль",
+        troops: 3000
+    },
+    UKR293: {
+        name: "Ужгород",
+        troops: 3000
+    },
+    UKR318: {
+        name: "Луцьк",
+        troops: 3000
+    },
+    UKR319: {
+        name: "Черкаси",
+        troops: 3000
+    },
+    UKR320: {
+        name: "Кіровоград",
+        troops: 3000
+    },
+    UKR321: {
+        name: "Київ",
+        troops: 30000
+    },
+    UKR322: {
+        name: "Одеса",
+        troops: 10000
+    },
+    UKR323: {
+        name: "Вінниця",
+        troops: 3000
+    },
+    UKR324: {
+        name: "Житомир",
+        troops: 3000
+    },
+    UKR325: {
+        name: "Суми",
+        troops: 3000
+    },
+    UKR326: {
+        name: "Дніпро",
+        troops: 15000
+    },
+    UKR327: {
+        name: "Донецьк",
+        troops: 15000,
+        rus: true
+    },
+    UKR328: {
+        name: "Харків",
+        troops: 7000
+    },
+    UKR329: {
+        name: "Луганськ",
+        troops: 20000,
+        rus: true
+    },
+    UKR330: {
+        name: "Полтава",
+        troops: 3000
+    },
+    UKR331: {
+        name: "Запоріжжя",
+        troops: 17000,
+        rus: true
+    },
+    UKR4827: {
+        name: "Херсон",
+        troops: 10000,
+        rus: true
+    },
+    BILORUS: {
+        name: "Білорусь",
+        troops: 40000,
+        rus: true
+    }
+};
+
+var conn = {
+    UKR283: ['UKR4827'],
+    UKR284: ['UKR322', 'UKR320', 'UKR326', 'UKR4827'],
+    UKR285: ['UKR321', 'UKR330', 'UKR325'],
+    UKR286: ['UKR318', 'UKR291', 'UKR292', 'UKR290', 'UKR324'],
+    UKR288: ['UKR289', 'UKR292', 'UKR290', 'UKR323'],
+    UKR289: ['UKR293', 'UKR291', 'UKR292', 'UKR288'],
+    UKR290: ['UKR288', 'UKR292', 'UKR286', 'UKR324', 'UKR323'],
+    UKR291: ['UKR293', 'UKR289', 'UKR292', 'UKR286', 'UKR318'],
+    UKR292: ['UKR289', 'UKR291', 'UKR286', 'UKR290', 'UKR288'],
+    UKR293: ['UKR291', 'UKR289'],
+    UKR318: ['UKR291', 'UKR286'],
+    UKR319: ['UKR323', 'UKR321', 'UKR330', 'UKR320'],
+    UKR320: ['UKR323', 'UKR319', 'UKR330', 'UKR326', 'UKR284', 'UKR322'],
+    UKR321: ['UKR324', 'UKR323', 'UKR319', 'UKR330', 'UKR285'],
+    UKR322: ['UKR323', 'UKR320', 'UKR284'],
+    UKR323: ['UKR288', 'UKR290', 'UKR324', 'UKR321', 'UKR319', 'UKR320', 'UKR322'],
+    UKR324: ['UKR286', 'UKR290', 'UKR323', 'UKR321'],
+    UKR325: ['UKR285', 'UKR330', 'UKR328'],
+    UKR326: ['UKR284', 'UKR320', 'UKR330', 'UKR328', 'UKR327', 'UKR331', 'UKR4827'],
+    UKR327: ['UKR331', 'UKR326', 'UKR328', 'UKR329'],
+    UKR328: ['UKR325', 'UKR330', 'UKR326', 'UKR327', 'UKR329'],
+    UKR329: ['UKR328', 'UKR327'],
+    UKR330: ['UKR319', 'UKR321', 'UKR285', 'UKR325', 'UKR328', 'UKR326', 'UKR320'],
+    UKR331: ['UKR4827', 'UKR326', 'UKR327'],
+    UKR4827: ['UKR284', 'UKR326', 'UKR331', 'UKR283']
+};
+var curr_line;
+var belarus;
+var last_news = -1;
+
+var news = [
+    'Путін пропонує ЗСУ скласти зброю, а Україні - підписати капітуляцію та приготуватись до денацифікації',
+    'Росія готова зберегти Україні державність та мову, якщо та визнає Крим, ДНР та ЛНР і відмовиться від НАТО',
+    'Лавров: ми не нападали на Україну, лише ввели миротворчі війська для допомоги молодим російськомовним республікам',
+    'В Москві тривають массові протести через складну продовольчу ситуацію та відсутність товарів першої необхідності',
+    'Путін пропонує почати добросусідські перемовини та стверджує, що його неправильно зрозуміли',
+    'Россія вводить залишки своїх військ з Білорусі в надії взяти Київ',
+    'В Кремлі паніка та пошуки зрадників серед військових, в країні відключено інтернет та телебачення',
+    'Перемога! Війська загарбника знищені, Путін помер від інфаркту, в Росії готуються до перших демократичних виборів під наглядом світової спільноти',
+];
+
+function newsline(n) {
+    if (n<=last_news) return;
+    $('#line').fadeIn(300);
+    last_news = n;
+    text = news[n];
+    d = 300;
+    if (curr_line !== text) {
+        timeout = 3000;
+        if (!n) timeout = 1000;
+        setTimeout(function () {
+            $('#line').removeClass('ani').addClass('high');
+            setTimeout(function () {
+                $('#line').removeClass('high').addClass('ani');
+            }, 6000);
+        }, timeout);
+        if (text.indexOf('Київ') !== -1) belarus = true;
+    }
+    curr_line = text;
+    $('#line div').html(text);
+}
+
+function days_between(date1, date2) {
+
+    // The number of milliseconds in one day
+    const ONE_DAY = 1000 * 60 * 60 * 24;
+
+    // Calculate the difference in milliseconds
+    const differenceMs = Math.abs(date1 - date2);
+
+    // Convert back to days and return
+    return Math.round(differenceMs / ONE_DAY);
+
+}
+
+function show_date() {
+    text = date.toLocaleDateString('uk-UA', {year: 'numeric', month: 'long', day: 'numeric'});
+    text = text.substring(0, text.length - 3);
+    text += ' (' + (days_between(start_date, date)+1) + ' день)';
+    $('#date').html(text);
+}
+
+show_date();
+
+var died_rus = 0; //50000;
+var died_ukr = 0; //10000;
+
+var total_ukr, total_rus, max_ukr, max_rus, start_rus;
+
+function count_troops() {
+    total_ukr = 0;
+    total_rus = 0;
+    max_ukr = 0;
+    max_rus = 0;
+    for (const [key, value] of Object.entries(army))
+        if (simplemaps_countrymap_mapdata.state_specific[key])
+            if (value.rus) {
+                total_rus += value.troops;
+                if (value.troops > max_rus) max_rus = value.troops;
+            } else {
+                total_ukr += value.troops;
+                if (value.troops > max_ukr) max_ukr = value.troops;
+            }
+    update_num(0, total_ukr);
+    update_num(1, died_ukr);
+    update_num(2, total_rus);
+    update_num(3, died_rus);
+    if (!start_rus) start_rus = total_rus;
+    if (!total_rus) {
+        $('#line').css('background','yellow');
+        newsline(news.length-1);
+        return;
+    }
+}
+
+function update_num(id, n) {
+    html = $(".sm_legend_item[data-id='" + id + "']").html();
+    html = html.substring(0, html.indexOf('</svg>') + 6);
+    html += num(n);
+    $(".sm_legend_item[data-id='" + id + "']").html(html);
+}
+
+function ukraine_init() {
+    update_all();
+};
+
+
+function update_all() {
+    count_troops();
+    for (const [key, value] of Object.entries(army)) u_update(key);
+    simplemaps_countrymap.refresh();
+}
+
+function u_update(id) {
+    if (!simplemaps_countrymap_mapdata.state_specific[id]) return;
+    arm = army[id];
+    max = 230;
+    if (arm.rus) {
+        x = max - Math.round(arm.troops / 25000 * max);
+        if (x<0) x =0;
+        color = 'rgb(255,' + x + ',' + x + ')';
+        hover = 'rgb(200,' + x + ',' + x + ')';
+        text = 'Орків: <b>' + num(arm.troops) + '</b>';
+        who = ' орків';
+    } else {
+        x = max - Math.round(arm.troops / 25000 * max);
+        if (x<0) x =0;
+        //color = 'rgb(255, 255,' + color + ')';
+        color = 'rgb(' + x + ', ' + x + ', 255)';
+        hover = 'rgb(' + x + ', ' + x + ', 200)';
+        text = 'ЗСУ: <b>' + num(arm.troops) + '</b>';
+        who = ' ЗСУ';
+    }
+    simplemaps_countrymap_mapdata.state_specific[id].color = color;
+    simplemaps_countrymap_mapdata.state_specific[id].hover_color = "#AAA";
+    simplemaps_countrymap_mapdata.state_specific[id].description = text;
+    simplemaps_countrymap_mapdata.state_specific[id].description = '';
+    simplemaps_countrymap_mapdata.labels[id].name = num(arm.troops) +'\n'+ who;
+}
+
+/*
+var comm = '';
+function copy(text) {
+    text = "'"+text+"'";
+    if (!comm) comm = text;
+    else comm = comm += ', ' + text;
+    text = '[' + comm + ']';
+    var input = document.createElement('textarea');
+    input.innerHTML = text;
+    document.body.appendChild(input);
+    input.select();
+    var result = document.execCommand('copy');
+    document.body.removeChild(input);
+    return result;
+}
+*/
+
+rus_from = '';
+rus_to = '';
+rus_move = 0;
+consolidate = true;
+
+function decide_move() {
+    best_ratio = -1;
+    for (const [key, value] of Object.entries(army)) {
+        if (!value.rus || !conn[key]) continue;
+        conn[key].forEach(to => {
+            if (!army[to].rus) {
+                ratio = value.troops / army[to].troops;
+                if (ratio > best_ratio) {
+                    best_ratio = ratio;
+                    rus_from = key;
+                    rus_to = to;
+                }
+            }
+        });
+    }
+    if (best_ratio === -1) {
+        rus_move = 0;
+        return;
+    }
+    // Consolidate
+    attack = true;
+    if (consolidate || best_ratio < 0.5) {
+        found = 0;
+        conn[rus_from].forEach(from => {
+            if (army[from].rus && army[from].troops > found) {
+                found_from = from;
+                found = army[from].troops;
+                attack = false;
+            }
+        });
+        if (found > army[rus_from].troops * 0.2) {
+            rus_to = rus_from;
+            rus_from = found_from;
+            consolidate = false;
+        } else if (found) {
+            found = 0;
+            conn[found_from].forEach(from => {
+                if (from !== rus_from && army[from].rus && army[from].troops > found) {
+                    found_from2 = from;
+                    found = army[from].troops;
+                }
+            });
+            if (found > army[rus_from].troops * 0.1) {
+                rus_to = found_from;
+                rus_from = found_from2;
+                consolidate = true;
+                attack = false;
+            }
+        }
+    }
+    if (attack) consolidate = true;
+}
+//25250
+function do_rus_move() {
+    newsline(Math.round(((start_rus-total_rus)/start_rus)*(news.length-2)));
+    rus_move = 1;
+    if (belarus && army['BILORUS'].troops > 21000) {
+        rus_from = 'BILORUS';
+        rus_to = 'UKR285';
+    } else decide_move();
+
+    if (!rus_move) return;
+    if (simplemaps_countrymap_mapdata.state_specific[rus_from]) {
+        simplemaps_countrymap_mapdata.state_specific[rus_from].color = '#ea00ff';
+        simplemaps_countrymap_mapdata.state_specific[rus_from].hover_color = '#ea00ff';
+        simplemaps_countrymap.refresh();
+    }
+    setTimeout(function () {
+        simplemaps_countrymap_mapdata.state_specific[rus_to].color = '#ea00ff';
+        simplemaps_countrymap_mapdata.state_specific[rus_to].hover_color = '#ea00ff';
+        simplemaps_countrymap.refresh();
+        setTimeout(function () {
+            //clear_log(); // Auto
+            simplemaps_countrymap_mapdata.state_specific[rus_to].color = '#ea00ff';
+            simplemaps_countrymap_mapdata.state_specific[rus_to].hover_color = '#ea00ff';
+            simplemaps_countrymap.refresh();
+            fight(rus_from, rus_to);
+            rus_move = 0;
+            date.setDate(date.getDate() + 1);
+            show_date();
+            //do_rus_move(); // Auto
+        }, 1000);
+    }, 1000);
+}
+
+var clicked = 0;
+
+function obl_click(id) {
+    if (rus_move) return;
+    if (clicked) {
+
+        for (const [key, value] of Object.entries(army))
+            if (simplemaps_countrymap_mapdata.state_specific[key]) {
+                simplemaps_countrymap_mapdata.state_specific[key].inactive = false;
+                //simplemaps_countrymap_mapdata.state_specific[key].opacity = 1;
+            }
+
+        u_update(clicked);
+        simplemaps_countrymap.refresh();
+        if (id === clicked) {
+            clicked = 0;
+            return;
+        }
+        clear_log();
+        fight(clicked, id);
+        clicked = 0;
+        do_rus_move();
+        return;
+    }
+
+    // First click
+    if (army[id].rus) return;
+    simplemaps_countrymap_mapdata.state_specific[id].color = 'yellow';
+    simplemaps_countrymap_mapdata.state_specific[id].hover_color = 'yellow';
+    for (const [key, value] of Object.entries(army))
+        if (!conn[id].includes(key) && key !== id && simplemaps_countrymap_mapdata.state_specific[key]) {
+            simplemaps_countrymap_mapdata.state_specific[key].inactive = true;
+            //simplemaps_countrymap_mapdata.state_specific[key].opacity = 0.3;
+        }
+    simplemaps_countrymap.refresh();
+    clicked = id;
+}
+
+function clear_log() {
+    $('#news').html(' ');
+}
+
+function log(text) {
+    $('#news').append(text + '<br>');
+}
+
+function fight(from, to) {
+    if (army[from].rus === army[to].rus) {
+        moved = Math.round(army[from].troops / 2);
+        //hint(1, from, -moved);
+        //hint(2, to, moved);
+        army[from].troops -= moved;
+        army[to].troops += moved;
+        if (army[from].rus) log('Переміщено <span class="ork">' + num(moved) + '</span> орків до ' + army[to].name);
+        else log('Переміщено <span class="zsu">' + num(moved) + '</span> бійців до ' + army[to].name);
+    } else {
+        //max_die = 1000 + Math.round(Math.random() * 2000);
+        max_die = 500;
+        plus = 0;
+        if (army[from].troops>2000) plus = Math.round((army[from].troops - 2000) / 10);
+        max_die += plus;
+        ratio = army[from].troops / army[to].troops;
+        if (!hard) ratio *= 2;
+        else ratio /= 2;
+        if (army[from].rus && !hard) ratio /= 8;
+        attackers = army[from].troops * ratio;
+        if (attackers > army[to].troops) {
+            if (army[to].troops < max_die) to_die = army[to].troops;
+            else to_die = max_die;
+            from_die = Math.round(to_die / ratio);
+        } else {
+            from_die = max_die;
+            if (from_die > army[from].troops / 2) from_die = Math.round(army[from].troops / 2);
+            to_die = Math.round(from_die * ratio);
+        }
+        if (army[from].rus) {
+            log('<b>Орки атакують ' + army[to].name + '</b>');
+            log('Знищено <span class="ork">' + num(from_die) + '</span> орків, втрати ЗСУ - <span class="zsu">' + num(to_die)+'</span>');
+        } else {
+            log('<b>ЗСУ атакують ' + army[to].name + '</b>');
+            log('Знищено <span class="ork">' + num(to_die) + '</span> орків, втрати ЗСУ - <span class="zsu">' + num(from_die)+'</span>');
+        }
+        //hint(1, from, -from_die);
+        //hint(2, to, -to_die);
+        army[from].troops -= from_die;
+        army[to].troops -= to_die;
+
+        if (army[from].rus) died_rus += from_die; else died_ukr += from_die;
+        if (army[to].rus) died_rus += to_die; else died_ukr += to_die;
+
+        if (!army[to].troops) {
+            if (army[from].rus) log(army[to].name + ' захоплено!');
+            else log(army[to].name + ' звільнено!');
+            army[to].rus = army[from].rus;
+            fight(from, to);
+        }
+    }
+    //log('');
+    update_all();
+}
+
+function hint(t, id, n) {
+    x=0.139;
+    $('#hint'+t).html(num(n)).css('margin-left', simplemaps_countrymap_mapdata.labels[id].x * x + 'vh')
+        .css('margin-top', (simplemaps_countrymap_mapdata.labels[id].y * x - 3)+ 'vh').show().fadeIn(200).delay(400).fadeOut(400);
+}
+
+function num(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
